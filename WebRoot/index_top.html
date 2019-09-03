@@ -1,0 +1,58 @@
+
+	<!-- *** index_top.html *** -->
+	<style>
+		/* 顶部固定 */
+		#top{
+			position: fixed;
+			top: 0px;
+			width: 100%;
+			border-top: 4px solid #309FE6;
+			background-color: #fff;
+			height: 65px;
+			box-shadow: 0 1px 4px 0 rgba(238, 238, 238, 0.5);
+		}
+		/* 顶部logo区 */
+		#top .logo{
+			position:absolute;
+			left: 10px;
+			top: 10px;
+			font-size: 24px;
+			color: #309FE6;
+			font-family: 幼圆;
+			padding: 4px;
+		}
+		/* 顶部右上用户信息区 */
+		#top .account{
+			position: absolute;
+			right: 100px;
+			top: 20px;
+		}
+		#top #quit{
+			position: absolute;
+			right: 30px;
+			top: 20px;
+			
+		}	
+	</style>
+	
+	<div id='top'>
+		<div class='logo'> 题库管理 </div>		
+		<div class='account'>
+			当前用户
+		</div>
+		<button id="quit" onclick="AD.quit()">退出</button>
+	</div>
+	
+	<script>
+		var AD = {};
+		
+		AD.quit=function()
+		{
+			var req = {};
+			Af.rest("AdminLogout.api",req,function(data){
+				alert("成功退出");
+				location.reload();
+			});
+		}
+	</script>
+	

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>习题管理</title>
+		<script src="jquery/afquery.js" type="text/javascript" charset="utf-8"></script>
+		<script src="jquery/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="jquery/afquery.css" />
+		
+		<style>
+			/* 工具栏 */
+			#content .toolbar{
+				padding: 8px ;
+			}			
+			#content .toolbar select{
+				padding: 4px;
+			}
+			/* 习题列表 */
+			.example_list{
+				border-top: 1px solid #bbb;
+				padding: 0px;
+			}
+			/* 习题 */
+			.example_list .item{
+				border-bottom: 1px solid #ddd;
+				border-radius: 0px;
+				padding: 10px;
+				margin: 0px;
+				
+			}
+			.example_list .chapter,.rank{
+				font: 14px '微软雅黑';
+				color: #444;
+				margin-bottom: 8px;				
+			}
+			.example_list .chapter{
+				/*text-decoration: underline;*/
+			}
+			.example_list .content{
+				margin-top: 16px;
+				padding-left: 8px;				
+				border-left: 4px solid cornflowerblue;				
+			}
+			.example_list .item .button{
+				margin-left:10px;
+				color: #d2931e;
+			}
+			
+		</style>
+			
+		<script>
+			var course_list=${course_listJ};
+			var chapter_list=${chapter_listJ};
+		</script>
+	</head>
+	
+	<body>
+		<#include '/index_top.html' />
+		<#include '/index_left.html' />
+		<!-- 中间 -->
+		<div id='content'>
+			
+			<!-- 工具按钮 -->
+			<div class="toolbar">
+				<select class="course_list"> </select>
+				<select class="chapter_list"> </select>
+				<button onclick='M.query()'> 查询 </button>	
+				<button onclick='M.add()'> 添加习题 </button>
+			</div>
+			<!-- 内容显示 -->
+			<div class='example_list' style='padding: 8px'>
+
+			</div>
+		</div>
+		<#include 'line_input_dialog.html'/> 
+		<#include 'confirm_dialog.html'/> 
+	</body>
+	<script>
+		MENU.select("题库管理")
+		
+		// 显示课程列表
+		var tp1 = new AfTemplate("<option value='{#id}'>{#title}</option>");
+		for(var a of course_list)
+			$('.course_list').append( tp1.replace(a));
+			
+		// 点击课程时, 加载相应的章节
+		$('.course_list').change(function(){
+			var course_id = $(this).val(); //选中课程的ID
+			$('.chapter_list').html('');
+			
+			var tp2 = new AfTemplate("<option value='{#number}'>{#number}:{#title}</option>");
+			for(var a of chapter_list)
+			{
+				if(a.course == course_id)
+					$('.chapter_list').append( tp2.replace(a));
+			}
+			$('.chapter_list').change();
+		});
+		
+
+		// 手工触发一个change事件, 让它选中第一条
+		if(course_list.length>0) $('.course_list').change();
+		
+		$('.chapter_list').change(function(){
+				M.query();
+		});
+		var M = {};
+		
+		M.add = function()
+		{
+			location.href = 'example_edit.sudo?course=' + $('.course_list').val();
+		}
+		
+		M.query = function()
+		{
+			var req = {}
+			req.course = Number( $('.course_list').val()); // 转成int
+			req.chapter = Number( $('.chapter_list').val()); // 转成int
+			Af.rest('ExampleList.api', req, function(data){
+				M.show_item_list(data);		
+			});
+		}
+		
+		M.show_item_list = function(data)
+		{
+			var target = $('.example_list');
+			target.html('');
+				
+			if(data==null || data.length == 0)
+			{
+				target.append("<div class='item' style='text-align:center'> 没有记录 </div>");
+				return;
+			}
+			
+			var ttt = "<div class='item' iid='{#id}'>"
+						+ "<div class='chapter'> 第{#number}章 - {#chapterTitle}"
+						+ "<a class='button' href='example_edit.sudo?course={#course}&example_id={#id}'>编辑</a>"
+						+ "<a class='button' href='javascript:void(0)' iid='{#id}' onclick='M.remove(this)'>删除</a>"
+						+ "</div>"
+						+ "<div class='rank'> 难度: {#rank} </div>"
+						+ "<div class='content'> {#content} </div>"
+						+ "</div>"
+						;				
+			var tp= new AfTemplate( ttt );
+			for(var d of data) 
+			{
+				target.append( tp.replace(d ));
+			}		
+		}
+		M.remove=function(e){
+			var ex_id = Number($(e).attr('iid'));
+			confirm_dialog("确定删除吗？",function(){
+				var req={};
+				req.id=ex_id;
+				Af.rest("ExampleRemove.api",req,function(){
+					$(e).parent().remove();
+				});
+			});
+		}
+		M.query();
+		M.init = function()
+		{
+			M.url_course=Af.getUrlParam("course");
+			if(M.url_course!=null)
+			{
+				$(".course_list").val(M.url_course);
+				$('.course_list').change();
+			}
+		}
+		M.init();
+	</script>
+
+</html>

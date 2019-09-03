@@ -1,0 +1,25 @@
+
+
+		<div id="confirm_dialog" class="af-dialog">
+			<div class="af-dialog-frame" style="width: 400px;height: 120px;padding: 10px;">
+				<div name="ask" style="text-align: left;margin: 10px 0px;">
+					是否确认操作？
+				</div>
+				<div style="text-align: left;margin: 10px 0px;">
+					<button role="ok">确定</button>
+					<button role="close">取消</button>
+				</div>
+			</div>
+		</div>
+		<script>
+			function confirm_dialog(prompt,okHandler){
+				var dlg = new AfDialog("#confirm_dialog");
+				dlg.set({"ask":prompt});
+				dlg.show();
+				
+				dlg.handleEvent("[role=ok]","click",function(){
+					dlg.hide();
+					okHandler();
+				});
+			}
+		</script>

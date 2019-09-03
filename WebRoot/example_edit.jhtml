@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>习题管理</title>
+		<script src="jquery/afquery.js" type="text/javascript" charset="utf-8"></script>
+		<script src="jquery/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="jquery/afquery.css" />
+		
+		<style>
+			/* 工具栏 */
+			#content .toolbar{
+				padding: 8px ;
+			}			
+			#content .form-line{
+				padding: 6px;
+			}
+			#content .form-line .label{
+				padding: 6px;
+				color: #444;
+			}
+			#content .form-line select{
+				padding: 6px;
+				min-width: 160px;
+			}		
+			#content .form-line textarea{
+				padding: 6px;
+				width: 500px;
+				min-height: 120px;
+			
+			
+		</style>
+			
+		<script>
+			var course = ${course.id};
+		</script>
+	</head>
+	
+	<body>
+		<#include '/index_top.html' />
+		<#include '/index_left.html' />
+		<!-- 中间 -->
+		<div id='content'>
+			
+			<!-- 工具按钮 -->
+			<div class='toolbar'>
+				<button onclick='M.save()'> 保存 </button>				
+			</div>
+			<!-- 内容显示 -->
+			<div class='edit' style='padding: 8px'>
+				<div class='form-line'>
+					<label class='label'> 课程 </label>
+					<label name='courseTitle'> ${course.title} </label>
+				</div>
+				<div class='form-line'>
+					<label class='label'> 章节 </label>
+					<select name='chapter'>
+						<#list chapter_list as r>
+							<option value='${r.number}'> ${r.number} : ${r.title}</option>
+						</#list>
+					</select>
+				</div>
+				<div class='form-line'>
+					<label class='label'> 难度 </label>
+					<select name='rank'> 
+						<option value='1'> 一 </option>
+						<option value='2'> 二 </option>
+						<option value='3'> 三 </option>
+						<option value='4'> 四 </option>
+						<option value='5'> 五 </option>
+					</select>
+				</div>
+				<div class='form-line'>
+					<label class='label' style='vertical-align: top;'> 题目 </label> 
+					<textarea name='content'></textarea>
+				</div>
+				<div class='form-line'>
+					<label class='label' style='vertical-align: top;'> 答案 </label> 
+					<textarea name='answer' ></textarea>
+				</div>
+			</div>
+		</div>
+		<#include 'line_input_dialog.html'/> 
+		<#include 'confirm_dialog.html'/> 
+	</body>
+	<script>
+		MENU.select("题库管理")
+		
+		var M = {};
+		M.save = function(){
+			var f= new AfForm('#content .edit');
+			var req = f.get();
+			req.course=course;
+			req.example_id=M.example_id;
+			Af.rest('ExampleSave.api',req,function(ans){
+				location.href = "example.sudo?course="+course;
+			});
+		}
+		
+		M.init = function()
+		{
+			M.example_id=Af.getUrlParam("example_id");
+			if(M.example_id!=null)
+			{
+				var req = {};
+				req.example_id=M.example_id;
+				Af.rest('ExampleLoad.api',req,function(data){
+				var f= new AfForm('#content .edit');
+				f.set(data);
+			});
+			}
+		}
+		M.init();
+	</script>
+
+</html>

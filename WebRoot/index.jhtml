@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>题库首页</title>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="jquery/afquery.css" />
+		<script src="jquery/afquery.js" type="text/javascript" charset="utf-8"></script>
+		<script src="jquery/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<#include '/index_top.html' />
+		<#include '/index_left.html' />
+		<!-- 中间 -->
+		<div id='content'>
+
+		</div>
+	</body>
+
+</html>

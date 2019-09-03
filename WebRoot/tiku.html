@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> 在线题库 </title>
+		<script type="text/javascript" src="jquery/jquery.min.js" ></script>
+		<script type="text/javascript" src="jquery/afquery.js" ></script>
+		
+		<!-- 伪静态JS , 可以用真正的静态化技术实现 -->
+		<script type="text/javascript" src="course_list.jsx"></script>
+		<script type="text/javascript" src="chapter_list.jsx"></script>
+		
+		<style>
+			.main{
+				width: 600px;
+				margin: 80px auto auto auto;
+			}
+			.logo{
+				padding: 20px;
+				font-size: 28px;
+				color: #555;
+			}
+			.line select,button{
+				padding: 5px;
+				height: 32px;
+				box-sizing: border-box;
+				border-color: #1E9FFF;
+			}
+			.course{
+				width: 200px;
+			}
+			.chapter{
+				width: calc(100% - 300px);
+			}
+			.search{
+				width: 80px;
+				background-color: #1E9FFF;
+				color: #fff;
+				outline: none;
+				border: 1px solid #1E9FFF;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div class='main'> 
+			<div style='text-align: center;margin-bottom: 50px;'>
+				<label class='logo'>在 线 题 库<label>
+			</div>
+			<div class='line' style='padding: 20px;'>
+				<select class='course'></select>
+				<select class='chapter'></select>
+				<button class='search' onclick='M.search()'> 检索 </button>
+			</div>			
+		</div>
+	</body>
+	
+	<script>
+		// 初始化显示
+		var M = {};
+		
+		// 显示课程列表
+		M.show_course_list = function()
+		{
+			var target = $('.course');
+			var tp = new AfTemplate("<option value='{#id}'> {#title} </option>");
+			for(var it of course_list)
+			{
+				target.append( tp.replace( it ));
+			}
+		}
+		
+		// 显示章节列表 : 传入课程ID作为参数
+		M.show_chapter_list = function(course)
+		{
+			var target = $('.chapter');
+			target.html(''); // 先清空			
+			var tp = new AfTemplate("<option value='{#number}'> {#title} </option>");
+			for(var it of chapter_list)
+			{
+				if(course == it.course)
+					target.append( tp.replace( it ));
+			}
+		}
+		
+		// 当选择课程时，显示相应的章节列表
+		$('.course').change( function(){				
+				var course = $(this).val();
+				M.show_chapter_list( course);				
+		});
+			
+		$(document).ready( function(){
+			
+			// 加载课程列表
+			M.show_course_list();
+			
+			// 加载第一门课的章节列表
+			M.show_chapter_list( course_list[0].id );	
+			
+		});
+		
+		M.search = function()
+		{
+			var course = $('.course').val().trim();
+			var chapter = $('.chapter').val().trim();
+			location.href = 'list.do?course='+course + '&chapter=' + chapter;
+		}
+	</script>
+</html>

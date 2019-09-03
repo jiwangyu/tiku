@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 示例
+	<service name="Hello" class="my.HelloApi" /> 
+	<upload name="BasicFile" class="my.my.BasicFileUpload" /> 
+	-->
+	<!-- 伪静态JS  
+	<jsx name="course_list" class="example.jsx.CourseListJSX" />
+	-->
+	<service name="CourseAdd" class="tiku.admin.course.CourseAddApi" /> 
+	<service name="CourseRemove" class="tiku.admin.course.CourseRemoveApi" /> 
+	<service name="CourseGet" class="tiku.admin.course.CourseGetApi" /> 
+	<service name="CourseUpdate" class="tiku.admin.course.CourseUpdateApi" /> 
+	<service name="ChapterSave" class="tiku.admin.chapter.ChapterSaveApi" /> 
+	<service name="ExampleSave" class="tiku.admin.example.ExampleSaveApi" /> 
+	<service name="ExampleList" class="tiku.admin.example.ExampleListApi" /> 
+	<service name="ExampleLoad" class="tiku.admin.example.ExampleLoadApi" /> 
+	<service name="ExampleRemove" class="tiku.admin.example.ExampleRemoveApi" /> 
+	<service name="AdminLogin" class="tiku.admin.login.AdminLoginApi" /> 
+	<service name="AdminLogout" class="tiku.admin.login.AdminLogoutApi" /> 
+	
+	<jsx name="course_list" class="tiku.user.CourseListJSX" />
+	<jsx name="chapter_list" class="tiku.user.ChapterListJSX" />
+</config>
+

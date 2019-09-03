@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> 习题浏览 </title>
+		<script type="text/javascript" src="jquery/jquery.min.js" ></script>
+		<script type="text/javascript" src="jquery/afquery.js" ></script>
+		
+		<style>
+			body{ margin: 0; background-color: #eee;}
+			
+			#head{
+				background-color: #fff;
+				border-bottom: 1px solid #f1f1f1;
+				position: fixed;
+				top: 0px;
+				width: 100%;
+			}
+			#head .head_nav{
+				width:1000px;
+				margin:auto;
+				padding: 12px;
+			}
+			#head .head_nav a{
+				text-decoration:none
+			}
+			.row{ width: 1000px; margin: auto;}
+			
+			/* 位置 */
+			#path_nav{ padding: 10px 0px;}
+			
+			/* 习题 */
+			.example{
+				background-color: #fff;
+				padding: 10px;
+				margin-bottom: 1px;
+			}
+			.example .content{
+				margin: 10px 0;
+				word-wrap:break-word;
+				word-break: keep-all;
+			
+			}
+			.example .number{
+				display: inline-block;
+				background: #FFB800;
+				border-radius: 6px;
+				color:#fff;
+				width: 16px;
+				text-align: center;
+				padding: 4px 6px;
+				font-size: 10px;
+			}
+			.example .answer{
+				margin: 10px 0;
+				border: 1px solid #eee;
+				border-radius: 4px;
+				padding: 10px;
+				word-break:break-all;
+			}
+			.example .answer_hidden{
+				display: none;
+			}
+			
+			/* 底部翻页 */
+			.page_nav2{
+				padding: 10px 0;
+				text-align: center;
+			}
+			.page_nav2 a{
+				margin: 6px;
+				font-size: 14px;
+				text-decoration: none;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div id='head'>
+			<div class='head_nav'>
+				<a href='tiku.html'style="margin-right:100px"> 在线题库 </a>
+				<#if (start>0) >
+					<a href='list.do?course=${courseId}&chapter=${chapterId}'> 首页 </a>
+					<a href='javascript:history.go(-1)'>上一页 </a>
+				</#if>
+	
+				<#if (next>0) > 
+					<a href='list.do?course=${courseId}&chapter=${chapterId}&start=${next}'> 下一页</a>
+				</#if>		
+			</div>		
+		</div>
+		<div id='path_nav' class='row'>
+			章节: 
+			<label> ${course.title} </label> :
+			<label> ${chapter.title} </label> 
+		</div>
+		
+		<!-- 习题列表 -->
+		<#list example_list as r>
+			<div class='example row'>
+				<!-- 题目 -->
+				<div class='content'> 
+					<label class='number'> ${r?counter} </label>
+					${r.contentHtml} 
+				</div>
+				
+				<!-- 按钮控制 -->
+				<div>
+					<button class='view_answer'> 答案 </button>
+					
+					<!-- 用一个循环来显示星星 -->
+					<#list 1..(r.rank) as n>
+						<img src='images/star.png' />
+					</#list>
+				</div>
+				
+				<!-- 答案, 默认隐藏 -->
+				<div class='answer answer_hidden'>
+					${r.answerHtml}
+				</div>
+			</div>			
+		</#list>
+		
+		<div class='page_nav2'>
+				<#if (start>0) >
+					<a href='list.do?course=${courseId}&chapter=${chapterId}'> 首页 </a>
+					<a href='javascript:history.go(-1)'>上一页 </a>
+				</#if>
+	
+				<#if (next>0) > 
+					<a href='list.do?course=${courseId}&chapter=${chapterId}&start=${next}'> 下一页</a>
+				</#if>				
+		</div>
+	</body>
+	
+	<script>
+		$('.example').each(function(){
+			var answer = $('.answer', this);
+			
+			/* 点击按钮时, 显示/隐藏下面的答案 */
+			$('.view_answer', this).click(function(){
+				answer.toggleClass('answer_hidden');
+			});
+		});
+		
+		
+	</script>
+</html>
