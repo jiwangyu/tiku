@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="course">
+	<select id="list" resultType="tiku.db.Course">
+		select * from course order by id ASC
+	</select>
+	<select id="get" resultType="tiku.db.Course">
+		select * from course where id=#{id}
+	</select>
+	<insert id="add" parameterType="tiku.db.Course"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `course`
+		(`id`, `title`)
+		VALUES(#{id}, #{title})
+	</insert>
+	<delete id="delete" parameterType="tiku.db.Course">
+		delete from course where id=#{id}
+	</delete>
+	<update id="update" parameterType="tiku.db.Course">
+    update course set title=#{title} where id=#{id}
+    </update>
+	
+
+
+
+</mapper>

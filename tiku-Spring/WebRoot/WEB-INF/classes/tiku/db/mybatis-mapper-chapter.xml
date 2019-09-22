@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="chapter">
+	<select id="list" resultType="tiku.db.Chapter">
+		select * from chapter where course =#{course_id} ORDER BY number ASC
+	</select>
+	<delete id="delete" parameterType="tiku.db.Chapter">
+		delete from chapter where course=#{course}
+	</delete>
+	<insert id="save" parameterType="tiku.db.Chapter"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `chapter`
+		(`title`, `course`,`number`)
+		VALUES(#{title}, #{course}, #{number})
+	</insert>
+
+          
+</mapper>

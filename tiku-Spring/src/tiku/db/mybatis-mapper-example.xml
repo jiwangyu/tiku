@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="example">
+
+	<select id="getChapter" resultType="tiku.db.Chapter">
+		select * from chapter order by course ASC, number ASC
+	</select>
+	<select id="getExample" resultType="hashmap">
+		 select a.id, a.course, b.number, rank, content , b.title as chapterTitle
+			from example a JOIN chapter b  
+			ON a.chapter = b.number AND a.course=b.course  
+			<if test="course > 0">
+		    where a.course=#{course}
+		 	</if>
+			<if test="chapter > 0">
+		    AND a.chapter=#{chapter}
+		 	</if>
+			ORDER BY a.chapter ASC, a.id 
+	</select>
+	<delete id="delete" parameterType="hashmap">
+		delete from example where id=#{id}
+	</delete>
+	
+	<select id="getCourse" resultType="tiku.db.Course">
+		select * from course where id =#{courseId} 
+	</select>
+	<select id="getChapter2" resultType="tiku.db.Chapter">
+		select * from chapter where course =#{courseId} ORDER BY number ASC
+	</select>
+
+          
+</mapper>

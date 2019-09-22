@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>章节管理</title>
+		<script src="../jquery/jquery.min.js" th:src="@{/jquery/jquery.min.js}" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery/afquery.js" th:src="@{/jquery/afquery.js}" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="../css/common.css" th:href="@{/css/common.css}"/>
+		<link rel="stylesheet" type="text/css" href="../css/index.css" th:href="@{/css/index.css}"/>
+		<link rel="stylesheet" type="text/css" href="../jquery/afquery.css" th:href="@{/jquery/afquery.css}"/>
+		
+		<style>
+			/* 工具栏 */
+			#content .toolbar{
+				padding: 8px ;
+			}			
+			#content .toolbar button:hover{
+				
+			}
+			
+			/* 课程信息 */
+			#content .info{
+				padding: 10px;
+				font-size: 20px;
+			}
+			/* 表格 */
+			.chapter_list{
+				
+			}
+			.chapter_list th { padding: 8px; background-color: #f1f1f1; color:#444;}
+			.chapter_list td { padding: 6px;}
+			.chapter_list tbody tr:hover{ background-color: #fde9c4;color:#444}
+			.chapter_list .c1 { width: 50px ;}
+			.chapter_list .c2 { width: 350px ;}
+			.chapter_list .c3 { width: 200px ;}
+		</style>
+		
+		
+	</head>
+	
+	<script th:inline="javascript">
+//		var course = document.getElementId("course").value;
+//		var chapters = document.getElementId("chapters").value;
+			var course = [[${course}]]
+			var chapters = [[${chapters}]]
+	</script>
+	<body>
+		
+		<div th:include=" ~{index_left::left}"></div>
+		<div th:include=" ~{index_top::top}"></div>
+		<!-- 中间 -->
+		<div id='content'>
+			<!-- 课程信息 -->
+			<div class='info' th:text="${course.title}">
+				课程标题
+			</div>
+			
+			<!-- 工具按钮 -->
+			<div class='toolbar'>
+				<button onclick='M.add()'> 添加 </button>
+				<button onclick='M.save()'> 保存 </button>
+			</div>	
+			
+			<!-- 内容显示 -->
+			<div style='padding: 8px'>
+				<table class='chapter_list'>
+					<thead>
+						<tr>
+							<th class='c1'> # </th>	
+							<th class='c2'> 章名称 </th>
+							<th class='c3'> - </th>
+						</tr>						
+					</thead>
+					<tbody>						
+					</tbody>
+					<tfoot style='display:none'>
+						<!-- 每一行的模块 -->
+						<tr>
+							<td> {#nnn} </td>
+							<td> {#title}  </td>
+							<td iid='{#nnn}'>
+								<a href='javascript:void(0)' onclick='M.remove(this)'> 删除 </a>
+							</td>
+						</tr>
+						<!--<tr th:each=" row: ${chapters}">
+							<td th:text=" ${row.id}"> number</td>
+							<td th:text=" ${row.title}"> title </td>
+							<td iid='' th:id=" ${row.id}">
+								<a href='javascript:void(0)' onclick='M.remove(this)'> 删除 </a>
+							</td>
+						</tr>-->
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div th:include=" ~{confirm_dialog::footer}"></div>
+		<div th:include=" ~{line_input_dialog::footer}"></div>
+	</body>
+	<script>
+		MENU.select("课程管理")
+
+		var M = {};
+		M.chapter_list = []; // 存储String
+
+		// 添加课程
+		M.add = function()
+		{
+			// 显示对话框 ( 网页基础 16篇 )
+			var dlg = new AfDialog('#line_input_dialog');
+			dlg.set({ prompt:'请输入章名称', value: '' });
+			dlg.show();
+			
+			// 添加事件处理器
+			dlg.handleEvent('[role=ok]', 'click', function(){
+				dlg.hide(); // 关闭对话框				
+				var result = dlg.get(); // 取得用户输入
+				M.chapter_list.push( result.value);		
+				M.refresh();
+			});
+		}
+
+		// 删除
+		M.remove = function (e )
+		{
+			var nnn = Number ( $(e).parent().attr('iid'));			
+			M.chapter_list.splice( nnn - 1, 1); // 从M.chapter_list中删除
+			M.refresh(); // 全部重新显示（因为章节序号要重编 )
+		}
+						
+		// 把 M.chapter_list 数组格式化为HTML表格
+		M.refresh = function()
+		{			
+			var target = $('.chapter_list tbody');
+			target.html(''); // 清空
+			
+			var tp = new AfTemplate( $('.chapter_list tfoot').html());
+			for( var i=0; i< M.chapter_list.length; i++)
+			{
+				var it = M.chapter_list[i];
+				
+				var row  = {};
+				row.title = it; 
+				row.nnn = i + 1; //章节序号				
+				var str = tp.replace( row );
+				target.append ( str ); // 添加一行
+			}
+		}
+		
+		M.save = function()
+		{
+			var req = {};
+			
+			req.course = course.id;
+			req.chapter_list = M.chapter_list;
+			Af.rest("[[@{/chapter/save.sudo}]]",req,function(data){
+				location.reload();
+			});
+		}
+		
+		for(var c of chapters) M.chapter_list.push(c.title);
+		M.refresh();
+		
+	</script>
+
+</html>

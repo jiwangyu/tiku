@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+S
+	<head>
+		<meta charset="UTF-8">
+		<title>课程管理</title>
+		<script src="../jquery/afquery.js" th:src="@{/jquery/afquery.js}" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery/jquery.min.js" th:src="@{/jquery/jquery.min.js}" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="../css/common.css" th:href="@{/css/common.css}"/>
+		<link rel="stylesheet" type="text/css" href="../css/index.css" th:href="@{/css/index.css}"/>
+		<link rel="stylesheet" type="text/css" href="../jquery/afquery.css" th:href="@{/jquery/afquery.css}"/>
+		
+		<style>
+			/* 工具栏 */
+			
+			#content .toolbar {
+				border-bottom: 1px solid #eee;
+				padding: 8px;
+			}
+			/* 条目 (课程) */
+			
+			#content .item {
+				display: inline-block;
+				position: relative;
+				width: 220px;
+				height: 40px;
+				padding: 10px;
+				line-height: 40px;
+				border: 0px solid #bbb;
+				background-color: #309FE6;
+				border-radius: 10px;
+				margin: 10px;
+				text-align: left;
+			}
+			/* 课程名 */
+			
+			#content .item .name {
+				margin: auto;
+				font: 16px "微软雅黑";
+				color: #f1f1f1;
+				vertical-align: middle;
+			}
+			#content .item .name a{
+				 text-decoration:none
+			}
+			
+			/* 课程的相关操作 */
+			
+			#content .item .buttons {
+				float: right;
+				vertical-align: middle;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div th:include=" ~{index_left::left}"></div>
+		<div th:include=" ~{index_top::top}"></div>
+		<div id='content'>
+			<!-- 工具按钮 -->
+			<div class='toolbar'>
+				<button onclick="M.add()"> 添加 </button>
+			</div>
+
+			<!-- 内容显示 -->
+			<!--<div>
+				<#list course_list as r>	
+					<div class='item'>
+						<img src='images/course.png' style='vertical-align: middle;'>
+						<label class='name'>
+							<a href="chapter.sudo?id=${r.id}">
+								${r.title} 
+							</a>
+						</label>
+						<div class='buttons' iid="${r.id}">
+							<img src='images/edit.png' title="编辑" onclick="M.edit(this)">
+							<img src='images/delete.png' title="删除" onclick="M.remove(this)">
+						</div>
+					</div>
+				</#list>
+			</div>-->
+			<div>
+				<div th:each=" row : ${course_list} " class='item'>
+					<img src='../images/course.png' th:src="@{/images/course.png}" style='vertical-align: middle;'>
+					<label class='name'>
+						<a href="chapter.sudo?id=id" th:href="|chapter.query?id=${row.id}|" th:text=" ${row.title} ">
+							标题
+						</a>
+					</label>
+					<div class='buttons' iid="id" th:iid="${row.id}">
+						<img src='../images/edit.png'  th:src="@{/images/edit.png}" title="编辑" onclick="M.edit(this)">
+						<img src='../images/delete.png' th:src="@{/images/delete.png}" title="删除" onclick="M.remove(this)">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div th:include=" ~{confirm_dialog::footer}"></div>
+		<div th:include=" ~{course_edit_dialog::footer}"></div>
+	</body>
+	<script>
+		MENU.select("课程管理")
+
+		var M = {};
+		M.add = function() {
+
+			var dlg = new AfDialog('#course_edit_dialog');
+			dlg.set({ title: '' });
+			dlg.show();
+			
+			// 添加事件处理器
+			dlg.handleEvent('[role=ok]', 'click', function(){
+				dlg.hide(); // 关闭对话框				
+				var req = dlg.get(); // 取得用户输入
+				// 提交到后台
+				Af.rest('[[@{/course/add.sudo}]]', req, function(data){
+					location.reload();
+				});
+//				jQuery.ajax({				
+//					url: '[[@{/course/add.sudo}]]', 			
+//					method: "POST", 
+//					contentType: 'application/json',
+//					processData: false,	
+//					data: JSON.stringify(req), 
+//					dataType: 'json', // 将应答数据转成json
+//					success: function(ans){
+//						alert('成功');
+//					},
+//					error: function( jqXHR, textStatus, errorThrown){
+//						alert('出错');
+//					}
+//				});
+			});
+		}
+		
+		M.remove=function(e){
+			var id = $(e).parent().attr("iid");
+			
+			confirm_dialog("确定删除吗？",function(){
+				var req={};
+				req.id=id;
+				Af.rest('[[@{/course/remove.sudo}]]',req,function(){
+					$(e).parent().parent().remove();
+				});
+			});
+		}
+		
+		M.edit=function(e){
+			var id = $(e).parent().attr("iid");
+			var req = {'id':id};
+			Af.rest('[[@{/course/get.sudo}]]',req,function(data){
+				M.edit2(data);
+			});
+		}
+		
+		M.edit2=function(row){
+			var dlg = new AfDialog('#course_edit_dialog');
+			dlg.set(row);
+			dlg.show();
+			
+			dlg.handleEvent('[role=ok]', 'click', function(){
+				dlg.hide(); // 关闭对话框				
+				var req = dlg.get(); // 取得用户输入
+				req.id=row.id;
+				// 提交到后台
+				Af.rest('[[@{/course/update.sudo}]]', req, function(data){
+					location.reload();
+				});
+			});
+		}
+	</script>
+
+</html>

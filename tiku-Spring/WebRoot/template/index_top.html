@@ -1,0 +1,43 @@
+
+	<!-- *** index_top.html *** -->
+	<style>
+		
+	</style>
+<div th:fragment="top">	
+	<div id='top' style="position: fixed;
+			top: 0px;
+			width: 100%;
+			border-top: 4px solid #309FE6;
+			background-color: #fff;
+			height: 65px;
+			box-shadow: 0 1px 4px 0 rgba(238, 238, 238, 0.5);">
+		<div class='logo' style="position:absolute;
+			left: 10px;
+			top: 10px;
+			font-size: 24px;
+			color: #309FE6;
+			font-family: 幼圆;
+			padding: 4px;"> 题库管理 </div>		
+		<div class='account' style="position: absolute;
+			right: 100px;
+			top: 20px;">
+			当前用户
+		</div>
+		<button id="quit" onclick="AD.quit()" style="position: absolute;
+			right: 30px;
+			top: 20px;">退出</button>
+	</div>
+	
+	<script>
+		var AD = {};
+		
+		AD.quit=function()
+		{
+			var req = {};
+			Af.rest("AdminLogout.api",req,function(data){
+				alert("成功退出");
+				location.reload();
+			});
+		}
+	</script>
+</div>	
