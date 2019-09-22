@@ -12,5 +12,4 @@
 ![](/图片/6.png) 
 ![](/图片/7.png) 
 
-开发环境：MyEclipse + MySQL + tomcat
-后台采用Java语言，模版引擎使用FreeMarker。
+
